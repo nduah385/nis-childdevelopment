@@ -1,0 +1,29 @@
+/* NIS Child Development Centre v2.1 enhancement layer */
+#adminOpen{display:none!important}
+#showFirstAdminSetup[hidden]{display:none!important}
+
+:root{--nis-theme-primary:#0f5c45;--nis-theme-primary-2:#0a4434;--nis-theme-accent:#f1b24a;--nis-theme-soft:#f3f8f5;--nis-theme-text:#17312a;--nis-theme-muted:#60736d}
+html[data-nis-theme="royal_blue"]{--nis-theme-primary:#174a7e;--nis-theme-primary-2:#10375f;--nis-theme-accent:#f4b942;--nis-theme-soft:#f1f6fb;--nis-theme-text:#152b42;--nis-theme-muted:#607284}
+html[data-nis-theme="warm_gold"]{--nis-theme-primary:#75531f;--nis-theme-primary-2:#543b16;--nis-theme-accent:#d9a441;--nis-theme-soft:#fbf6eb;--nis-theme-text:#352a19;--nis-theme-muted:#776b58}
+html[data-nis-theme="earth_hope"]{--nis-theme-primary:#4e6a3d;--nis-theme-primary-2:#374c2c;--nis-theme-accent:#c88c4a;--nis-theme-soft:#f4f5ed;--nis-theme-text:#293426;--nis-theme-muted:#687064}
+html[data-nis-theme="high_contrast"]{--nis-theme-primary:#111;--nis-theme-primary-2:#000;--nis-theme-accent:#ffd400;--nis-theme-soft:#fff;--nis-theme-text:#000;--nis-theme-muted:#333}
+body{color:var(--nis-theme-text)}
+.site-header,.section-dark,.site-footer,.donation-section{background-color:var(--nis-theme-primary)!important}
+.section-soft{background-color:var(--nis-theme-soft)!important}
+.btn-primary,.tab.active{background:var(--nis-theme-primary)!important;border-color:var(--nis-theme-primary)!important}
+.btn-accent{background:var(--nis-theme-accent)!important;border-color:var(--nis-theme-accent)!important;color:#17211d!important}
+.btn-outline{border-color:var(--nis-theme-primary)!important;color:var(--nis-theme-primary)!important}
+.eyebrow.dark,.text-link.dark-link{color:var(--nis-theme-primary)!important}
+html[data-nis-theme="high_contrast"] a:focus,html[data-nis-theme="high_contrast"] button:focus,html[data-nis-theme="high_contrast"] input:focus,html[data-nis-theme="high_contrast"] select:focus,html[data-nis-theme="high_contrast"] textarea:focus{outline:4px solid #ffd400!important;outline-offset:2px}
+
+.nis-video-section[hidden]{display:none!important}
+.nis-video-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin-top:24px}
+.nis-video-card{background:#fff;border:1px solid rgba(20,55,45,.12);border-radius:18px;overflow:hidden;box-shadow:0 14px 34px rgba(16,42,34,.08);display:flex;flex-direction:column}
+.nis-video-thumb{position:relative;aspect-ratio:16/9;background:linear-gradient(135deg,var(--nis-theme-primary),var(--nis-theme-primary-2));display:flex;align-items:center;justify-content:center;overflow:hidden}
+.nis-video-thumb img{width:100%;height:100%;object-fit:cover;display:block}.nis-video-play{position:absolute;width:62px;height:62px;border-radius:50%;background:rgba(255,255,255,.94);display:grid;place-items:center;font-size:24px;color:var(--nis-theme-primary);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.nis-video-body{padding:20px;display:flex;flex-direction:column;gap:8px;flex:1}.nis-video-body h3{margin:0}.nis-video-body p{margin:0 0 10px;color:#52645f}.nis-video-meta{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800;color:var(--nis-theme-primary)}.nis-video-link{margin-top:auto;font-weight:800;color:var(--nis-theme-primary);text-decoration:none}
+
+.nis-theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0}.nis-theme-card{border:2px solid #dce5e1;border-radius:16px;background:#fff;padding:16px;cursor:pointer;text-align:left}.nis-theme-card.selected{border-color:var(--nis-theme-primary);box-shadow:0 0 0 3px rgba(15,92,69,.14)}.nis-theme-swatch{height:74px;border-radius:12px;margin-bottom:12px;display:flex;overflow:hidden}.nis-theme-swatch span{flex:1}.nis-enh-status{margin-top:12px;font-weight:700}.nis-enh-status.error{color:#a72b2b}.nis-enh-status.success{color:#17633d}
+.nis-video-admin-list{display:grid;gap:12px;margin-top:18px}.nis-video-admin-card{display:grid;grid-template-columns:96px 1fr auto;gap:14px;align-items:center;padding:14px;border:1px solid #dce5e1;border-radius:14px;background:#fff}.nis-video-admin-card img{width:96px;height:60px;object-fit:cover;border-radius:9px;background:#e8eeeb}.nis-video-admin-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.nis-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.nis-form-grid .full{grid-column:1/-1}.nis-form-grid label{display:grid;gap:6px;font-weight:700}.nis-form-grid input,.nis-form-grid select,.nis-form-grid textarea{width:100%}.nis-consent-note{padding:12px 14px;border-radius:12px;background:#fff7df;border:1px solid #edd59b}
+@media(max-width:900px){.nis-video-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nis-theme-grid{grid-template-columns:1fr}}
+@media(max-width:640px){.nis-video-grid{grid-template-columns:1fr}.nis-video-admin-card{grid-template-columns:1fr}.nis-video-admin-card img{width:100%;height:auto;aspect-ratio:16/9}.nis-form-grid{grid-template-columns:1fr}.nis-form-grid .full{grid-column:auto}}
