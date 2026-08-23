@@ -1,5 +1,5 @@
 window.NIS_CONFIG = {
-  neonAuthUrl: "https://ep-quiet-star-af3t7s87.neonauth.c-2.us-west-2.aws/neondb/auth".replace('.aws/','.aws.neon.tech/'),
+  neonAuthUrl: "https://ep-quiet-star-af3t7s87.neonauth.c-2.us-west-2.aws.neon.tech/neondb/auth",
   neonDataApiUrl: "https://ep-quiet-star-af3t7s87.apirest.c-2.us-west-2.aws.neon.tech/neondb/rest/v1",
   canonicalUrl: "https://nduah385.github.io/nis-childdevelopment/",
   version: "2.3.3-neon-r2",
@@ -20,13 +20,14 @@ window.NIS_CONFIG = {
   warmConnection('https://ep-quiet-star-af3t7s87.apirest.c-2.us-west-2.aws.neon.tech');
   warmConnection('https://nis-cdc-media-upload.nduah385.workers.dev');
 
-  function showLogo(id,url,alt,priority){
+  function showLogo(id,url,alt,priority,fallbackId){
     var img=document.getElementById(id);if(!img||!url)return;
-    img.src=url;img.alt=alt||'';img.decoding='async';
+    img.alt=alt||'';img.decoding='async';
     if(priority)img.setAttribute('fetchpriority','high');
-    img.hidden=false;
+    img.addEventListener('error',function(){img.hidden=true;var fallback=fallbackId&&document.getElementById(fallbackId);if(fallback)fallback.hidden=false},{once:true});
+    img.src=url;img.hidden=false;
   }
-  showLogo('brandLogo',cfg.bootstrapOrganisationLogo,'NIS Child Development Centre logo',true);
+  showLogo('brandLogo',cfg.bootstrapOrganisationLogo,'NIS Child Development Centre logo',true,'brandMark');
   var brandMark=document.getElementById('brandMark');if(brandMark&&cfg.bootstrapOrganisationLogo)brandMark.hidden=true;
   showLogo('schoolHeroLogo',cfg.bootstrapSchoolLogo,'Nipe International School logo',true);
   showLogo('schoolLogo',cfg.bootstrapSchoolLogo,'Nipe International School logo',false);
