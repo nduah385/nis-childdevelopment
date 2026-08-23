@@ -14,6 +14,7 @@ window.NIS_CONFIG = {
 
   var css21=document.createElement('link');css21.rel='stylesheet';css21.href='assets/enhancements.v2.1.0.css';document.head.appendChild(css21);
   var css22=document.createElement('link');css22.rel='stylesheet';css22.href='assets/enhancements.v2.2.0.css';document.head.appendChild(css22);
+  var css23=document.createElement('link');css23.rel='stylesheet';css23.href='assets/admin-version.v2.3.0.css';document.head.appendChild(css23);
 
   var isAdmin=new URLSearchParams(location.search).get('admin')==='1';
   if(isAdmin){
