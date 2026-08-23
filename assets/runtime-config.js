@@ -2,7 +2,7 @@ window.NIS_CONFIG = {
   neonAuthUrl: "https://ep-quiet-star-af3t7s87.neonauth.c-2.us-west-2.aws.neon.tech/neondb/auth",
   neonDataApiUrl: "https://ep-quiet-star-af3t7s87.apirest.c-2.us-west-2.aws.neon.tech/neondb/rest/v1",
   canonicalUrl: "https://nduah385.github.io/nis-childdevelopment/",
-  version: "2.2.4-neon-r2",
+  version: "2.3.0-neon-r2",
   videoUploadWorkerUrl: "https://nis-cdc-media-upload.nduah385.workers.dev"
 };
 
@@ -17,9 +17,9 @@ window.NIS_CONFIG = {
 
   var isAdmin=new URLSearchParams(location.search).get('admin')==='1';
   if(isAdmin){
-    var js21=document.createElement('script');js21.type='module';js21.src='assets/enhancements.v2.1.0.js?v=2.2.4';document.head.appendChild(js21);
-    var js22=document.createElement('script');js22.type='module';js22.src='assets/enhancements.v2.2.0.js?v=2.2.4';document.head.appendChild(js22);
+    var js21=document.createElement('script');js21.type='module';js21.src='assets/enhancements.v2.1.0.js?v=2.3.0';document.head.appendChild(js21);
+    var js22=document.createElement('script');js22.type='module';js22.src='assets/enhancements.v2.2.0.js?v=2.3.0';document.head.appendChild(js22);
   }else{
-    var pub=document.createElement('script');pub.src='assets/public-enhancements.v2.2.3.js?v=2.2.4';document.head.appendChild(pub);
+    var pub=document.createElement('script');pub.src='assets/public-enhancements.v2.2.3.js?v=2.3.0';document.head.appendChild(pub);
   }
 })();
