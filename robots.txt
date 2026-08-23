@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://nduah385.github.io/nis-childdevelopment/sitemap.xml
