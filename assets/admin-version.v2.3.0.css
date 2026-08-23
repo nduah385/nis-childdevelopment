@@ -1,0 +1,2 @@
+#adminDashboard .mini-label{font-size:0}
+#adminDashboard .mini-label::after{content:"Website build v2.3.0 • Neon + R2";font-size:12px}
