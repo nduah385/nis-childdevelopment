@@ -1,0 +1,9 @@
+#adminDashboard .mini-label{font-size:0}
+#adminDashboard .mini-label::after{content:"Website build v2.3.3 • Neon + R2";font-size:12px}
+
+.nis-password-wrap{position:relative;display:block;width:100%}
+.nis-password-wrap>input{width:100%;padding-right:78px!important;box-sizing:border-box}
+.nis-password-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);min-width:54px;padding:6px 9px;border:0;border-radius:999px;background:transparent;color:#8a5a17;font:inherit;font-size:13px;font-weight:700;line-height:1;cursor:pointer;z-index:2}
+.nis-password-toggle:hover{background:rgba(138,90,23,.08)}
+.nis-password-toggle:focus-visible{outline:2px solid #9b6a20;outline-offset:2px;background:#fff8eb}
+.nis-password-toggle[aria-pressed="true"]{color:#0f5c45}
