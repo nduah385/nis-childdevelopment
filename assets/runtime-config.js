@@ -2,7 +2,7 @@ window.NIS_CONFIG = {
   neonAuthUrl: "https://ep-quiet-star-af3t7s87.neonauth.c-2.us-west-2.aws.neon.tech/neondb/auth",
   neonDataApiUrl: "https://ep-quiet-star-af3t7s87.apirest.c-2.us-west-2.aws.neon.tech/neondb/rest/v1",
   canonicalUrl: "https://nduah385.github.io/nis-childdevelopment/",
-  version: "2.2.0-neon-r2",
+  version: "2.2.1-neon-r2",
   videoUploadWorkerUrl: "https://nis-cdc-media-upload.nduah385.workers.dev"
 };
 
@@ -15,4 +15,6 @@ window.NIS_CONFIG = {
 
   var css22=document.createElement('link');css22.rel='stylesheet';css22.href='assets/enhancements.v2.2.0.css';document.head.appendChild(css22);
   var js22=document.createElement('script');js22.type='module';js22.src='assets/enhancements.v2.2.0.js';document.head.appendChild(js22);
+
+  var js221=document.createElement('script');js221.src='assets/enhancements.v2.2.1-video-public-fix.js';document.head.appendChild(js221);
 })();
