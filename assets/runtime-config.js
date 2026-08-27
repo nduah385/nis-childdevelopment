@@ -2,7 +2,7 @@ window.NIS_CONFIG = {
   neonAuthUrl: "https://ep-quiet-star-af3t7s87.neonauth.c-2.us-west-2.aws.neon.tech/neondb/auth",
   neonDataApiUrl: "https://ep-quiet-star-af3t7s87.apirest.c-2.us-west-2.aws.neon.tech/neondb/rest/v1",
   canonicalUrl: "https://nduah385.github.io/nis-childdevelopment/",
-  version: "2.3.4.1-neon-r2-single-admin",
+  version: "2.3.5-neon-r2-single-admin",
   videoUploadWorkerUrl: "https://nis-cdc-media-upload.nduah385.workers.dev",
   bootstrapOrganisationLogo: "https://nis-cdc-media-upload.nduah385.workers.dev/media/images/migration/website_settings/value/2026/08/66471ec8-6788-4837-b39c-eaa6b967a735.webp",
   bootstrapSchoolLogo: "https://nis-cdc-media-upload.nduah385.workers.dev/media/images/migration/school_profile/logo_url/2026/08/f8bebbbc-f460-4c74-8e51-1c2c23dad119.webp"
@@ -50,6 +50,8 @@ window.NIS_CONFIG = {
     var recovery=document.createElement('script');recovery.type='module';recovery.src='assets/password-recovery.v2.3.1.js?v=2.3.4.1';document.head.appendChild(recovery);
     var visibility=document.createElement('script');visibility.src='assets/password-visibility.v2.3.2.js?v=2.3.4.1';document.head.appendChild(visibility);
   }else{
+    var giveCss=document.createElement('link');giveCss.rel='stylesheet';giveCss.href='assets/donation-panel.v2.3.5.css?v=2.3.5';document.head.appendChild(giveCss);
     var pub=document.createElement('script');pub.src='assets/public-enhancements.v2.2.3.js?v=2.3.4.1';document.head.appendChild(pub);
+    var giveJs=document.createElement('script');giveJs.src='assets/donation-panel.v2.3.5.js?v=2.3.5';document.head.appendChild(giveJs);
   }
 })();
