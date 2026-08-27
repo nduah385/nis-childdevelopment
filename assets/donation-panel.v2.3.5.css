@@ -126,6 +126,57 @@
 .nis-give-note-icon svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
 .nis-give-note strong{color:#fff}
 .nis-give-source{display:none!important}
+
+/* v2.3.5.1 compact horizontal desktop layout */
+@media(min-width:981px){
+  .donation-section .container.split{
+    grid-template-columns:minmax(0,1.55fr) minmax(360px,.85fr);
+    gap:38px;
+  }
+  .donation-section .check-list{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    column-gap:28px;
+    row-gap:2px;
+    margin:14px 0 16px;
+  }
+  #publicDonationInstructions.nis-give-panel{
+    margin-top:16px;
+    padding:18px;
+    border-radius:20px;
+  }
+  .nis-give-heading{margin-bottom:13px}
+  .nis-give-kicker{margin-bottom:7px;padding:6px 10px;font-size:.68rem}
+  .nis-give-heading h3{font-size:1.5rem;margin-bottom:0}
+  .nis-give-heading p{margin-top:6px;max-width:72ch;font-size:.86rem;line-height:1.45}
+  .nis-give-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+  }
+  .nis-give-card{padding:14px;border-radius:16px}
+  .nis-give-card-head{gap:10px;margin-bottom:10px}
+  .nis-give-icon{width:40px;height:40px;flex-basis:40px;border-radius:12px}
+  .nis-give-icon svg{width:20px;height:20px}
+  .nis-give-card-title h4{font-size:.96rem}
+  .nis-give-card-title span{font-size:.72rem}
+  .nis-give-detail{
+    grid-template-columns:92px minmax(0,1fr);
+    gap:7px 9px;
+    padding:7px 0;
+  }
+  .nis-give-label{font-size:.66rem}
+  .nis-give-value{font-size:.82rem;line-height:1.35}
+  .nis-give-number{min-height:32px;padding:6px 9px;font-size:.86rem;border-radius:9px}
+  .nis-give-copy{min-height:32px;padding:6px 8px;font-size:.69rem;border-radius:9px}
+  .nis-give-copy svg{width:12px;height:12px}
+  .nis-give-note{margin-top:12px;padding:10px 12px;font-size:.74rem;line-height:1.4}
+  .nis-give-note-icon{width:22px;height:22px;flex-basis:22px;border-radius:7px}
+  .nis-give-note-icon svg{width:13px;height:13px}
+}
+
+@media(max-width:980px){
+  .nis-give-grid{grid-template-columns:1fr}
+}
 @media(max-width:560px){
   #publicDonationInstructions.nis-give-panel{padding:19px;border-radius:19px}
   .nis-give-detail{grid-template-columns:1fr;gap:4px}
