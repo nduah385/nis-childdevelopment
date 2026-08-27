@@ -1,4 +1,4 @@
-/* NIS Child Development Centre — Google Maps embed compatibility v2.3.6 */
+/* NIS Child Development Centre — Google Maps + WhatsApp contact compatibility v2.3.6.1 */
 (function(){
   'use strict';
   var cfg=window.NIS_CONFIG||{};
@@ -37,6 +37,61 @@
     return true;
   }
 
+  function whatsappDigits(raw){
+    var value=String(raw||'').trim();
+    if(!value)return'';
+    var digits=value.replace(/\D/g,'');
+    if(!digits)return'';
+    if(digits.indexOf('00')===0)digits=digits.slice(2);
+    if(digits.length===10&&digits.charAt(0)==='0')digits='233'+digits.slice(1);
+    return digits;
+  }
+
+  function enhanceWhatsApp(){
+    var host=document.getElementById('contactDetails');
+    if(!host)return false;
+    var cards=host.querySelectorAll('p');
+    for(var i=0;i<cards.length;i++){
+      var label=cards[i].querySelector('strong');
+      if(!label||String(label.textContent||'').trim().toLowerCase()!=='whatsapp')continue;
+      if(cards[i].querySelector('a.nis-whatsapp-link'))return true;
+      var raw='';
+      for(var n=0;n<cards[i].childNodes.length;n++){
+        var node=cards[i].childNodes[n];
+        if(node.nodeType===Node.TEXT_NODE)raw+=node.nodeValue||'';
+      }
+      raw=raw.replace(/^\s*:\s*/,'').trim();
+      if(!raw)return false;
+      var digits=whatsappDigits(raw);
+      if(!digits)return false;
+      var link=document.createElement('a');
+      link.className='nis-whatsapp-link';
+      link.href='https://wa.me/'+digits;
+      link.target='_blank';
+      link.rel='noopener noreferrer';
+      link.textContent=raw;
+      link.setAttribute('aria-label','Chat on WhatsApp with '+raw);
+      link.title='Open WhatsApp chat';
+      for(var j=cards[i].childNodes.length-1;j>=0;j--){
+        if(cards[i].childNodes[j].nodeType===Node.TEXT_NODE)cards[i].removeChild(cards[i].childNodes[j]);
+      }
+      cards[i].appendChild(link);
+      return true;
+    }
+    return false;
+  }
+
+  function watchWhatsApp(){
+    if(enhanceWhatsApp())return;
+    var host=document.getElementById('contactDetails');
+    if(!host)return;
+    var observer=new MutationObserver(function(){
+      if(enhanceWhatsApp())observer.disconnect();
+    });
+    observer.observe(host,{childList:true,subtree:true});
+    setTimeout(function(){observer.disconnect();enhanceWhatsApp()},5000);
+  }
+
   async function loadConfiguredMap(){
     if(!cfg.neonAuthUrl||!cfg.neonDataApiUrl)return;
     try{
@@ -56,9 +111,14 @@
     }
   }
 
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',function(){setTimeout(loadConfiguredMap,120)},{once:true});
-  }else{
+  function start(){
+    watchWhatsApp();
     setTimeout(loadConfiguredMap,120);
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',start,{once:true});
+  }else{
+    start();
   }
 })();
