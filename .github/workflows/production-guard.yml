@@ -1,0 +1,150 @@
+name: Production Guard
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-guard-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify required production files
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=(
+            index.html
+            robots.txt
+            sitemap.xml
+            assets/runtime-config.js
+            assets/styles.v2.0.0.css
+            assets/app.v2.3.0-neon-r2.js
+            assets/single-admin-hardening.v2.3.4.js
+            assets/public-enhancements.v2.2.3.js
+            assets/donation-panel.v2.3.5.js
+            assets/donation-panel.v2.3.5.css
+          )
+          for file in "${required[@]}"; do
+            test -s "$file" || { echo "Missing or empty required file: $file"; exit 1; }
+          done
+
+      - name: Validate JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check assets/runtime-config.js
+          node --check assets/public-enhancements.v2.2.3.js
+          node --check assets/donation-panel.v2.3.5.js
+          node --check assets/password-visibility.v2.3.2.js
+          node --input-type=module --check < assets/app.v2.3.0-neon-r2.js
+          node --input-type=module --check < assets/single-admin-hardening.v2.3.4.js
+          node --input-type=module --check < assets/enhancements.v2.1.0.js
+          node --input-type=module --check < assets/enhancements.v2.2.0.js
+          node --input-type=module --check < assets/password-recovery.v2.3.1.js
+
+      - name: Validate local asset references and production configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          root = Path('.')
+          index = Path('index.html').read_text(encoding='utf-8')
+          runtime = Path('assets/runtime-config.js').read_text(encoding='utf-8')
+
+          required_config = [
+              'window.NIS_CONFIG',
+              'neonAuthUrl',
+              'neonDataApiUrl',
+              'canonicalUrl',
+              'videoUploadWorkerUrl',
+              'single-admin-hardening.v2.3.4.js',
+          ]
+          for token in required_config:
+              if token not in runtime:
+                  raise SystemExit(f'Missing required runtime configuration token: {token}')
+
+          canonical = 'https://nduah385.github.io/nis-childdevelopment/'
+          if canonical not in index or canonical not in runtime:
+              raise SystemExit('Production canonical URL is missing or inconsistent')
+
+          if 'localhost' in runtime.lower() or '127.0.0.1' in runtime:
+              raise SystemExit('Localhost reference found in production runtime configuration')
+
+          hardening_pos = runtime.find('single-admin-hardening.v2.3.4.js')
+          route_split_pos = runtime.find("var isAdmin=new URLSearchParams")
+          if hardening_pos < 0 or route_split_pos < 0 or hardening_pos > route_split_pos:
+              raise SystemExit('Single-admin hardening must load before public/admin route branching')
+
+          asset_re = re.compile(r"assets/[A-Za-z0-9._/-]+\.(?:js|css|png|jpg|jpeg|webp|svg)")
+          refs = set(asset_re.findall(index + '\n' + runtime))
+          missing = sorted(ref for ref in refs if not (root / ref).is_file())
+          if missing:
+              raise SystemExit('Missing referenced local assets: ' + ', '.join(missing))
+
+          print(f'Validated {len(refs)} referenced local assets.')
+          PY
+
+      - name: Reject sensitive backend credentials in public source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          patterns = {
+              'database connection variable': re.compile(r'(?i)\bDATABASE_URL\b'),
+              'PostgreSQL connection string': re.compile(r'(?i)postgres(?:ql)?://'),
+              'R2 admin secret name': re.compile(r'\bR2_GATEWAY_ADMIN_SECRET\b'),
+              'R2 signing secret name': re.compile(r'\bR2_GATEWAY_SIGNING_SECRET\b'),
+              'service-role credential': re.compile(r'(?i)\bSERVICE_ROLE(?:_KEY)?\b'),
+              'private key material': re.compile(r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----'),
+          }
+
+          allowed_suffixes = {'.html', '.js', '.css', '.txt', '.xml', '.json'}
+          violations = []
+          for path in Path('.').rglob('*'):
+              if not path.is_file() or '.git' in path.parts or '.github' in path.parts:
+                  continue
+              if path.suffix.lower() not in allowed_suffixes:
+                  continue
+              text = path.read_text(encoding='utf-8', errors='ignore')
+              for label, pattern in patterns.items():
+                  if pattern.search(text):
+                      violations.append(f'{path}: {label}')
+
+          if violations:
+              raise SystemExit('Sensitive backend credential pattern found:\n' + '\n'.join(violations))
+
+          print('No prohibited backend credential patterns found in public source.')
+          PY
+
+      - name: Verify single-admin security asset is globally loaded
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q "single-admin-hardening.v2.3.4.js" assets/runtime-config.js
+          grep -q "role === 'super_admin'" assets/single-admin-hardening.v2.3.4.js
+          grep -q "activeAdmins.length !== 1" assets/single-admin-hardening.v2.3.4.js
+
+      - name: Production guard passed
+        run: echo "Production Guard passed successfully."
