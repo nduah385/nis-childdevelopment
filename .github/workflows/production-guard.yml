@@ -144,7 +144,7 @@ jobs:
           set -euo pipefail
           grep -q "single-admin-hardening.v2.3.4.js" assets/runtime-config.js
           grep -q "role === 'super_admin'" assets/single-admin-hardening.v2.3.4.js
-          grep -q "activeAdmins.length !== 1" assets/single-admin-hardening.v2.3.4.js
+          grep -q "rows.length === 1" assets/single-admin-hardening.v2.3.4.js
 
       - name: Production guard passed
         run: echo "Production Guard passed successfully."
