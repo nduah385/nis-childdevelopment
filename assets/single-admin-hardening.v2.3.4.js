@@ -32,7 +32,7 @@ function setState(value) {
 
 function statusMessage(message) {
   const status = document.getElementById('adminLoginStatus');
-  if (status && message) status.textContent = message;
+  if (status) status.textContent = message || '';
 }
 
 function markBuild() {
@@ -65,16 +65,21 @@ async function verifyPrimaryAdministrator() {
       return false;
     }
 
-    const { data: admin, error } = await client
+    const { data: activeAdmins, error } = await client
       .from('admin_users')
       .select('id,email,display_name,role,is_active')
-      .eq('id', session.user.id)
-      .maybeSingle();
+      .eq('is_active', true);
 
-    const authorised = !error && admin?.is_active === true && admin?.role === 'super_admin' && String(admin.id) === String(session.user.id);
+    const rows = Array.isArray(activeAdmins) ? activeAdmins : [];
+    const admin = rows.find(row => String(row.id) === String(session.user.id));
+    const authorised = !error && rows.length === 1 && admin?.role === 'super_admin' && admin?.is_active === true;
+
     if (!authorised) {
       try { await client.auth.signOut(); } catch {}
-      await lockAdministration('Access denied. This website is controlled only by its authorised primary administrator.');
+      const message = rows.length > 1
+        ? 'Access locked because more than one active administrator record exists. This website is configured for one administrator only.'
+        : 'Access denied. This website is controlled only by its authorised primary administrator.';
+      await lockAdministration(message);
       return false;
     }
 
