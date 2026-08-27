@@ -1,0 +1,145 @@
+/* NIS Child Development Centre — compact professional Contact section v2.3.6 */
+#contact{
+  padding:64px 0;
+  background:
+    radial-gradient(circle at 8% 10%,rgba(15,92,69,.045),transparent 26%),
+    linear-gradient(180deg,#ffffff,#f7faf8);
+}
+#contact .contact-grid{
+  grid-template-columns:minmax(0,1.06fr) minmax(390px,.94fr);
+  gap:28px;
+  align-items:stretch;
+}
+#contact .contact-grid>div:first-child{
+  padding:24px;
+  border:1px solid #dfe9e3;
+  border-radius:24px;
+  background:#fff;
+  box-shadow:0 18px 48px rgba(16,61,45,.08);
+}
+#contact .eyebrow{margin:0 0 8px}
+#contact h2{
+  margin:0 0 16px;
+  max-width:650px;
+  font-size:clamp(2rem,3.35vw,3.15rem);
+  line-height:1.05;
+}
+#contactDetails{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin-top:18px;
+}
+#contactDetails p{
+  position:relative;
+  min-height:64px;
+  margin:0;
+  padding:12px 12px 12px 48px;
+  border:1px solid #e1eae5;
+  border-radius:14px;
+  background:#f8fbf9;
+  color:#4f6259;
+  font-size:.86rem;
+  line-height:1.42;
+  overflow-wrap:anywhere;
+}
+#contactDetails p::before{
+  position:absolute;
+  left:12px;
+  top:13px;
+  display:grid;
+  place-items:center;
+  width:28px;
+  height:28px;
+  border-radius:9px;
+  background:#e4f3eb;
+  color:#0f5c45;
+  font-size:.9rem;
+  font-weight:800;
+}
+#contactDetails p:nth-child(1)::before{content:'⌖'}
+#contactDetails p:nth-child(2)::before{content:'☎'}
+#contactDetails p:nth-child(3)::before{content:'✉'}
+#contactDetails p:nth-child(4)::before{content:'◉'}
+#contactDetails strong{
+  display:block;
+  margin-bottom:3px;
+  color:#18372d;
+  font-size:.75rem;
+  letter-spacing:.035em;
+  text-transform:uppercase;
+}
+#contactDetails a{color:#0f5c45;font-weight:800}
+#contactMap.map-frame{
+  display:block;
+  width:100%;
+  height:230px;
+  margin-top:14px;
+  border:1px solid #d9e5de;
+  border-radius:16px;
+  background:#edf4f0;
+  box-shadow:0 10px 28px rgba(16,61,45,.08);
+}
+#contactMap[hidden]{display:none!important}
+
+#contactForm.form-card{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:0 12px;
+  align-content:start;
+  padding:22px;
+  border:1px solid #e1e9e4;
+  border-radius:24px;
+  box-shadow:0 18px 48px rgba(16,61,45,.09);
+}
+#contactForm>h3{
+  grid-column:1/-1;
+  margin:0 0 14px;
+  font-size:1.2rem;
+}
+#contactForm>label{
+  min-width:0;
+  margin-bottom:10px;
+  gap:5px;
+  font-size:.75rem;
+}
+#contactForm>label:nth-of-type(5),
+#contactForm>label:nth-of-type(6){grid-column:1/-1}
+#contactForm input,
+#contactForm select,
+#contactForm textarea{
+  padding:10px 11px;
+  border-radius:9px;
+}
+#contactForm textarea{
+  min-height:94px;
+  resize:vertical;
+}
+#contactForm .btn,
+#contactForm button[type='submit']{
+  grid-column:1/-1;
+  justify-self:start;
+  margin-top:0;
+  padding:10px 18px;
+}
+#contactForm .form-status{grid-column:1/-1;margin-top:6px}
+
+@media(max-width:980px){
+  #contact{padding:58px 0}
+  #contact .contact-grid{grid-template-columns:1fr;gap:20px}
+  #contactMap.map-frame{height:260px}
+}
+@media(max-width:680px){
+  #contact{padding:48px 0}
+  #contact .contact-grid>div:first-child,
+  #contactForm.form-card{padding:18px;border-radius:19px}
+  #contactDetails{grid-template-columns:1fr}
+  #contactForm.form-card{grid-template-columns:1fr}
+  #contactForm>label,
+  #contactForm>label:nth-of-type(5),
+  #contactForm>label:nth-of-type(6),
+  #contactForm .btn,
+  #contactForm button[type='submit'],
+  #contactForm .form-status{grid-column:1}
+  #contactMap.map-frame{height:225px}
+}
