@@ -41,9 +41,10 @@ window.NIS_CONFIG = {
   var css22=document.createElement('link');css22.rel='stylesheet';css22.href='assets/enhancements.v2.2.0.css';document.head.appendChild(css22);
   var css23=document.createElement('link');css23.rel='stylesheet';css23.href='assets/admin-version.v2.3.3.css?v=2.3.4';document.head.appendChild(css23);
 
+  var hardening=document.createElement('script');hardening.type='module';hardening.src='assets/single-admin-hardening.v2.3.4.js?v=2.3.4';document.head.appendChild(hardening);
+
   var isAdmin=new URLSearchParams(location.search).get('admin')==='1';
   if(isAdmin){
-    var hardening=document.createElement('script');hardening.type='module';hardening.src='assets/single-admin-hardening.v2.3.4.js?v=2.3.4';document.head.appendChild(hardening);
     var js21=document.createElement('script');js21.type='module';js21.src='assets/enhancements.v2.1.0.js?v=2.3.4';document.head.appendChild(js21);
     var js22=document.createElement('script');js22.type='module';js22.src='assets/enhancements.v2.2.0.js?v=2.3.4';document.head.appendChild(js22);
     var recovery=document.createElement('script');recovery.type='module';recovery.src='assets/password-recovery.v2.3.1.js?v=2.3.4';document.head.appendChild(recovery);
