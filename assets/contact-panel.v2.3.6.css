@@ -1,4 +1,4 @@
-/* NIS Child Development Centre — compact professional Contact section v2.3.6 */
+/* NIS Child Development Centre — compact professional Contact section v2.3.6.1 */
 #contact{
   padding:64px 0;
   background:
@@ -70,6 +70,32 @@
   text-transform:uppercase;
 }
 #contactDetails a{color:#0f5c45;font-weight:800}
+#contactDetails .nis-whatsapp-link{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  color:#128c4a;
+  text-decoration:none;
+  font-weight:800;
+  transition:color .18s ease,transform .18s ease;
+}
+#contactDetails .nis-whatsapp-link::after{
+  content:'↗';
+  display:inline-grid;
+  place-items:center;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:#dcf8e8;
+  color:#08783b;
+  font-size:.68rem;
+}
+#contactDetails .nis-whatsapp-link:hover,
+#contactDetails .nis-whatsapp-link:focus-visible{
+  color:#08783b;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
 #contactMap.map-frame{
   display:block;
   width:100%;
