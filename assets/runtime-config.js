@@ -2,17 +2,17 @@ window.NIS_CONFIG = {
   neonAuthUrl: "https://ep-quiet-star-af3t7s87.neonauth.c-2.us-west-2.aws.neon.tech/neondb/auth",
   neonDataApiUrl: "https://ep-quiet-star-af3t7s87.apirest.c-2.us-west-2.aws.neon.tech/neondb/rest/v1",
   canonicalUrl: "https://nduah385.github.io/nis-childdevelopment/",
-  version: "2.3.7-neon-r2-single-admin",
+  version: "2.3.8-production-finish-neon-r2-single-admin",
   videoUploadWorkerUrl: "https://nis-cdc-media-upload.nduah385.workers.dev",
   bootstrapOrganisationLogo: "https://nis-cdc-media-upload.nduah385.workers.dev/media/images/migration/website_settings/value/2026/08/66471ec8-6788-4837-b39c-eaa6b967a735.webp",
   bootstrapSchoolLogo: "https://nis-cdc-media-upload.nduah385.workers.dev/media/images/migration/school_profile/logo_url/2026/08/f8bebbbc-f460-4c74-8e51-1c2c23dad119.webp"
 };
 
 (function(){
+  'use strict';
   var cfg=window.NIS_CONFIG;
+  var isAdmin=new URLSearchParams(location.search).get('admin')==='1';
 
-  /* First-paint branding: replace the generic NIS browser icon immediately,
-     before the slower Neon settings refresh supplies the same organisation logo. */
   if(cfg.bootstrapOrganisationLogo){
     var preloadLogo=document.createElement('link');
     preloadLogo.rel='preload';preloadLogo.as='image';preloadLogo.href=cfg.bootstrapOrganisationLogo;
@@ -49,26 +49,27 @@ window.NIS_CONFIG = {
   var adminOpen=document.getElementById('adminOpen');
   if(adminOpen){adminOpen.style.display='none';adminOpen.setAttribute('aria-hidden','true')}
   var firstSetup=document.getElementById('showFirstAdminSetup');
-  if(firstSetup){firstSetup.hidden=true}
+  if(firstSetup)firstSetup.hidden=true;
 
-  var css21=document.createElement('link');css21.rel='stylesheet';css21.href='assets/enhancements.v2.1.0.css';document.head.appendChild(css21);
-  var css22=document.createElement('link');css22.rel='stylesheet';css22.href='assets/enhancements.v2.2.0.css';document.head.appendChild(css22);
-  var css23=document.createElement('link');css23.rel='stylesheet';css23.href='assets/admin-version.v2.3.3.css?v=2.3.4.1';document.head.appendChild(css23);
-  var navCss=document.createElement('link');navCss.rel='stylesheet';navCss.href='assets/navigation-visibility.v2.3.7.css?v=2.3.7';document.head.appendChild(navCss);
+  function addCss(href){var l=document.createElement('link');l.rel='stylesheet';l.href=href;document.head.appendChild(l);return l}
+  function addScript(src,type){var s=document.createElement('script');if(type)s.type=type;s.src=src;document.head.appendChild(s);return s}
 
-  var hardening=document.createElement('script');hardening.type='module';hardening.src='assets/single-admin-hardening.v2.3.4.js?v=2.3.4.1';document.head.appendChild(hardening);
+  addCss('assets/enhancements.v2.1.0.css?v=2.3.8');
+  addCss('assets/enhancements.v2.2.0.css?v=2.3.8');
+  addCss('assets/navigation-visibility.v2.3.7.css?v=2.3.8');
 
-  var isAdmin=new URLSearchParams(location.search).get('admin')==='1';
   if(isAdmin){
-    var js21=document.createElement('script');js21.type='module';js21.src='assets/enhancements.v2.1.0.js?v=2.3.4.1';document.head.appendChild(js21);
-    var js22=document.createElement('script');js22.type='module';js22.src='assets/enhancements.v2.2.0.js?v=2.3.4.1';document.head.appendChild(js22);
-    var recovery=document.createElement('script');recovery.type='module';recovery.src='assets/password-recovery.v2.3.1.js?v=2.3.4.1';document.head.appendChild(recovery);
-    var visibility=document.createElement('script');visibility.src='assets/password-visibility.v2.3.2.js?v=2.3.4.1';document.head.appendChild(visibility);
+    addCss('assets/admin-version.v2.3.3.css?v=2.3.8');
+    addScript('assets/single-admin-hardening.v2.3.4.js?v=2.3.8','module');
+    addScript('assets/enhancements.v2.1.0.js?v=2.3.8','module');
+    addScript('assets/enhancements.v2.2.0.js?v=2.3.8','module');
+    addScript('assets/password-recovery.v2.3.1.js?v=2.3.8','module');
+    addScript('assets/password-visibility.v2.3.2.js?v=2.3.8');
   }else{
-    var giveCss=document.createElement('link');giveCss.rel='stylesheet';giveCss.href='assets/donation-panel.v2.3.5.css?v=2.3.5.1';document.head.appendChild(giveCss);
-    var contactCss=document.createElement('link');contactCss.rel='stylesheet';contactCss.href='assets/contact-panel.v2.3.6.css?v=2.3.6.1';document.head.appendChild(contactCss);
-    var pub=document.createElement('script');pub.src='assets/public-enhancements.v2.2.3.js?v=2.3.4.1';document.head.appendChild(pub);
-    var giveJs=document.createElement('script');giveJs.src='assets/donation-panel.v2.3.5.js?v=2.3.5.1';document.head.appendChild(giveJs);
-    var contactJs=document.createElement('script');contactJs.src='assets/contact-panel.v2.3.6.js?v=2.3.6.2';document.head.appendChild(contactJs);
+    addCss('assets/production-performance.v2.3.8.css?v=2.3.8');
+    addCss('assets/donation-panel.v2.3.5.css?v=2.3.8');
+    addCss('assets/contact-panel.v2.3.6.css?v=2.3.8');
+    addScript('assets/public-runtime.v2.3.8.js?v=2.3.8');
+    addScript('assets/donation-panel.v2.3.8.js?v=2.3.8');
   }
 })();
