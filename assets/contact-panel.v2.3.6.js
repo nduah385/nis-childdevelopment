@@ -1,7 +1,9 @@
-/* NIS Child Development Centre — Google Maps + WhatsApp contact compatibility v2.3.6.1 */
+/* NIS Child Development Centre — resilient Google Maps + WhatsApp contact compatibility v2.3.6.2 */
 (function(){
   'use strict';
   var cfg=window.NIS_CONFIG||{};
+  var approvedMapUrl='';
+  var mapRestoreQueued=false;
 
   function extractMapUrl(raw){
     var value=String(raw||'').trim();
@@ -25,16 +27,34 @@
     }catch(e){return''}
   }
 
-  function showMap(url){
+  function ensureMap(){
     var frame=document.getElementById('contactMap');
-    if(!frame||!url)return false;
-    frame.src=url;
+    if(!frame||!approvedMapUrl)return false;
+    if(frame.getAttribute('src')!==approvedMapUrl)frame.setAttribute('src',approvedMapUrl);
     frame.loading='lazy';
     frame.referrerPolicy='no-referrer-when-downgrade';
     frame.setAttribute('allowfullscreen','');
     frame.title='NIS Child Development Centre location map';
-    frame.hidden=false;
+    if(frame.hidden)frame.hidden=false;
     return true;
+  }
+
+  function queueMapRestore(){
+    if(mapRestoreQueued)return;
+    mapRestoreQueued=true;
+    setTimeout(function(){
+      mapRestoreQueued=false;
+      ensureMap();
+    },0);
+  }
+
+  function watchMap(){
+    var frame=document.getElementById('contactMap');
+    if(!frame)return;
+    var observer=new MutationObserver(function(){
+      if(approvedMapUrl)queueMapRestore();
+    });
+    observer.observe(frame,{attributes:true,attributeFilter:['src','hidden']});
   }
 
   function whatsappDigits(raw){
@@ -52,18 +72,20 @@
     if(!host)return false;
     var cards=host.querySelectorAll('p');
     for(var i=0;i<cards.length;i++){
-      var label=cards[i].querySelector('strong');
-      if(!label||String(label.textContent||'').trim().toLowerCase()!=='whatsapp')continue;
-      if(cards[i].querySelector('a.nis-whatsapp-link'))return true;
-      var raw='';
-      for(var n=0;n<cards[i].childNodes.length;n++){
-        var node=cards[i].childNodes[n];
-        if(node.nodeType===Node.TEXT_NODE)raw+=node.nodeValue||'';
-      }
-      raw=raw.replace(/^\s*:\s*/,'').trim();
+      var card=cards[i];
+      var label=card.querySelector('strong');
+      var labelText=label?String(label.textContent||'').trim().toLowerCase().replace(/:\s*$/,''):'';
+      if(labelText!=='whatsapp')continue;
+      if(card.querySelector('a.nis-whatsapp-link'))return true;
+
+      var clone=card.cloneNode(true);
+      var cloneLabel=clone.querySelector('strong');
+      if(cloneLabel)cloneLabel.remove();
+      var raw=String(clone.textContent||'').trim().replace(/^:\s*/,'');
       if(!raw)return false;
       var digits=whatsappDigits(raw);
       if(!digits)return false;
+
       var link=document.createElement('a');
       link.className='nis-whatsapp-link';
       link.href='https://wa.me/'+digits;
@@ -72,24 +94,29 @@
       link.textContent=raw;
       link.setAttribute('aria-label','Chat on WhatsApp with '+raw);
       link.title='Open WhatsApp chat';
-      for(var j=cards[i].childNodes.length-1;j>=0;j--){
-        if(cards[i].childNodes[j].nodeType===Node.TEXT_NODE)cards[i].removeChild(cards[i].childNodes[j]);
-      }
-      cards[i].appendChild(link);
+
+      while(label.nextSibling)card.removeChild(label.nextSibling);
+      card.appendChild(document.createTextNode(' '));
+      card.appendChild(link);
       return true;
     }
     return false;
   }
 
   function watchWhatsApp(){
-    if(enhanceWhatsApp())return;
     var host=document.getElementById('contactDetails');
     if(!host)return;
+    enhanceWhatsApp();
+    var queued=false;
     var observer=new MutationObserver(function(){
-      if(enhanceWhatsApp())observer.disconnect();
+      if(queued)return;
+      queued=true;
+      setTimeout(function(){
+        queued=false;
+        enhanceWhatsApp();
+      },0);
     });
-    observer.observe(host,{childList:true,subtree:true});
-    setTimeout(function(){observer.disconnect();enhanceWhatsApp()},5000);
+    observer.observe(host,{childList:true,subtree:true,characterData:true});
   }
 
   async function loadConfiguredMap(){
@@ -103,8 +130,8 @@
       var result=await client.from('website_settings').select('value').eq('key','map_embed_url').limit(1);
       if(result.error)throw new Error(result.error.message);
       var raw=result.data&&result.data[0]?result.data[0].value:'';
-      var mapUrl=extractMapUrl(raw);
-      if(mapUrl)showMap(mapUrl);
+      approvedMapUrl=extractMapUrl(raw);
+      if(approvedMapUrl)ensureMap();
       else if(raw)console.warn('Google Maps embed setting was present but could not be safely validated.');
     }catch(e){
       console.error('Contact map load failed',e);
@@ -113,7 +140,10 @@
 
   function start(){
     watchWhatsApp();
-    setTimeout(loadConfiguredMap,120);
+    watchMap();
+    setTimeout(loadConfiguredMap,80);
+    setTimeout(enhanceWhatsApp,400);
+    setTimeout(enhanceWhatsApp,1200);
   }
 
   if(document.readyState==='loading'){
