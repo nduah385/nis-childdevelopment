@@ -1,0 +1,19 @@
+/* NIS Child Development Centre — production rendering optimizations v2.3.8 */
+html{scroll-padding-top:86px}
+.brand-emblem{width:48px;height:48px;flex:0 0 48px;overflow:hidden}
+.brand-logo{width:48px;height:48px;object-fit:contain;display:block}
+.hero-slide-image{will-change:opacity;backface-visibility:hidden}
+img[loading="lazy"]{content-visibility:auto}
+@media(min-width:760px){
+  main>section:not(#home):not(.stats-strip){
+    content-visibility:auto;
+    contain-intrinsic-size:720px;
+  }
+  #contact{contain-intrinsic-size:620px}
+  #donate{contain-intrinsic-size:650px}
+  #gallery{contain-intrinsic-size:760px}
+  #stories{contain-intrinsic-size:700px}
+}
+@media(prefers-reduced-motion:reduce){
+  .hero-slide-image{will-change:auto}
+}
