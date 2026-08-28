@@ -2,7 +2,7 @@ window.NIS_CONFIG = {
   neonAuthUrl: "https://ep-quiet-star-af3t7s87.neonauth.c-2.us-west-2.aws.neon.tech/neondb/auth",
   neonDataApiUrl: "https://ep-quiet-star-af3t7s87.apirest.c-2.us-west-2.aws.neon.tech/neondb/rest/v1",
   canonicalUrl: "https://nduah385.github.io/nis-childdevelopment/",
-  version: "2.3.8-production-finish-neon-r2-single-admin",
+  version: "2.3.9-final-production-neon-r2-single-admin",
   videoUploadWorkerUrl: "https://nis-cdc-media-upload.nduah385.workers.dev",
   bootstrapOrganisationLogo: "https://nis-cdc-media-upload.nduah385.workers.dev/media/images/migration/website_settings/value/2026/08/66471ec8-6788-4837-b39c-eaa6b967a735.webp",
   bootstrapSchoolLogo: "https://nis-cdc-media-upload.nduah385.workers.dev/media/images/migration/school_profile/logo_url/2026/08/f8bebbbc-f460-4c74-8e51-1c2c23dad119.webp"
@@ -54,22 +54,24 @@ window.NIS_CONFIG = {
   function addCss(href){var l=document.createElement('link');l.rel='stylesheet';l.href=href;document.head.appendChild(l);return l}
   function addScript(src,type){var s=document.createElement('script');if(type)s.type=type;s.src=src;document.head.appendChild(s);return s}
 
-  addCss('assets/enhancements.v2.1.0.css?v=2.3.8');
-  addCss('assets/enhancements.v2.2.0.css?v=2.3.8');
-  addCss('assets/navigation-visibility.v2.3.7.css?v=2.3.8');
+  addCss('assets/enhancements.v2.1.0.css?v=2.3.9');
+  addCss('assets/enhancements.v2.2.0.css?v=2.3.9');
+  addCss('assets/theme-pack.v2.3.9.css?v=2.3.9');
+  addCss('assets/navigation-visibility.v2.3.7.css?v=2.3.9');
 
   if(isAdmin){
-    addCss('assets/admin-version.v2.3.3.css?v=2.3.8');
-    addScript('assets/single-admin-hardening.v2.3.4.js?v=2.3.8','module');
-    addScript('assets/enhancements.v2.1.0.js?v=2.3.8','module');
-    addScript('assets/enhancements.v2.2.0.js?v=2.3.8','module');
-    addScript('assets/password-recovery.v2.3.1.js?v=2.3.8','module');
-    addScript('assets/password-visibility.v2.3.2.js?v=2.3.8');
+    addCss('assets/admin-version.v2.3.3.css?v=2.3.9');
+    addScript('assets/single-admin-hardening.v2.3.4.js?v=2.3.9','module');
+    addScript('assets/enhancements.v2.1.0.js?v=2.3.9','module');
+    addScript('assets/enhancements.v2.2.0.js?v=2.3.9','module');
+    addScript('assets/appearance.v2.3.9.js?v=2.3.9','module');
+    addScript('assets/password-recovery.v2.3.1.js?v=2.3.9','module');
+    addScript('assets/password-visibility.v2.3.2.js?v=2.3.9');
   }else{
-    addCss('assets/production-performance.v2.3.8.css?v=2.3.8');
-    addCss('assets/donation-panel.v2.3.5.css?v=2.3.8');
-    addCss('assets/contact-panel.v2.3.6.css?v=2.3.8');
-    addScript('assets/public-runtime.v2.3.8.js?v=2.3.8');
-    addScript('assets/donation-panel.v2.3.8.js?v=2.3.8');
+    addCss('assets/production-performance.v2.3.8.css?v=2.3.9');
+    addCss('assets/donation-panel.v2.3.5.css?v=2.3.9');
+    addCss('assets/contact-panel.v2.3.6.css?v=2.3.9');
+    addScript('assets/public-runtime.v2.3.9.js?v=2.3.9');
+    addScript('assets/donation-panel.v2.3.8.js?v=2.3.9');
   }
 })();
