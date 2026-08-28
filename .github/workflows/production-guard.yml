@@ -36,9 +36,12 @@ jobs:
             assets/styles.v2.0.0.css
             assets/app.v2.3.0-neon-r2.js
             assets/single-admin-hardening.v2.3.4.js
-            assets/public-enhancements.v2.2.3.js
-            assets/donation-panel.v2.3.5.js
+            assets/public-runtime.v2.3.8.js
+            assets/donation-panel.v2.3.8.js
             assets/donation-panel.v2.3.5.css
+            assets/contact-panel.v2.3.6.css
+            assets/navigation-visibility.v2.3.7.css
+            assets/production-performance.v2.3.8.css
           )
           for file in "${required[@]}"; do
             test -s "$file" || { echo "Missing or empty required file: $file"; exit 1; }
@@ -49,8 +52,8 @@ jobs:
         run: |
           set -euo pipefail
           node --check assets/runtime-config.js
-          node --check assets/public-enhancements.v2.2.3.js
-          node --check assets/donation-panel.v2.3.5.js
+          node --check assets/public-runtime.v2.3.8.js
+          node --check assets/donation-panel.v2.3.8.js
           node --check assets/password-visibility.v2.3.2.js
           node --input-type=module --check < assets/app.v2.3.0-neon-r2.js
           node --input-type=module --check < assets/single-admin-hardening.v2.3.4.js
@@ -77,6 +80,8 @@ jobs:
               'canonicalUrl',
               'videoUploadWorkerUrl',
               'single-admin-hardening.v2.3.4.js',
+              'public-runtime.v2.3.8.js',
+              'production-performance.v2.3.8.css',
           ]
           for token in required_config:
               if token not in runtime:
@@ -89,10 +94,25 @@ jobs:
           if 'localhost' in runtime.lower() or '127.0.0.1' in runtime:
               raise SystemExit('Localhost reference found in production runtime configuration')
 
+          admin_branch = runtime.find('if(isAdmin){')
+          public_branch = runtime.find('}else{', admin_branch)
           hardening_pos = runtime.find('single-admin-hardening.v2.3.4.js')
-          route_split_pos = runtime.find("var isAdmin=new URLSearchParams")
-          if hardening_pos < 0 or route_split_pos < 0 or hardening_pos > route_split_pos:
-              raise SystemExit('Single-admin hardening must load before public/admin route branching')
+          public_runtime_pos = runtime.find('public-runtime.v2.3.8.js')
+          if min(admin_branch, public_branch, hardening_pos, public_runtime_pos) < 0:
+              raise SystemExit('Public/admin runtime branching could not be validated')
+          if not (admin_branch < hardening_pos < public_branch):
+              raise SystemExit('Single-admin hardening must load only inside the admin route branch')
+          if public_runtime_pos < public_branch:
+              raise SystemExit('Consolidated public runtime must load only inside the public route branch')
+
+          obsolete_public_refs = [
+              'public-enhancements.v2.2.3.js',
+              'contact-panel.v2.3.6.js',
+              'donation-panel.v2.3.5.js',
+          ]
+          for token in obsolete_public_refs:
+              if token in runtime:
+                  raise SystemExit(f'Obsolete public runtime reference still active: {token}')
 
           asset_re = re.compile(r"assets/[A-Za-z0-9._/-]+\.(?:js|css|png|jpg|jpeg|webp|svg)")
           refs = set(asset_re.findall(index + '\n' + runtime))
@@ -100,7 +120,7 @@ jobs:
           if missing:
               raise SystemExit('Missing referenced local assets: ' + ', '.join(missing))
 
-          print(f'Validated {len(refs)} referenced local assets.')
+          print(f'Validated {len(refs)} referenced local assets and route isolation.')
           PY
 
       - name: Reject sensitive backend credentials in public source
@@ -120,7 +140,7 @@ jobs:
               'private key material': re.compile(r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----'),
           }
 
-          allowed_suffixes = {'.html', '.js', '.css', '.txt', '.xml', '.json'}
+          allowed_suffixes = {'.html', '.js', '.css', '.txt', '.xml', '.json', '.md'}
           violations = []
           for path in Path('.').rglob('*'):
               if not path.is_file() or '.git' in path.parts or '.github' in path.parts:
@@ -138,7 +158,7 @@ jobs:
           print('No prohibited backend credential patterns found in public source.')
           PY
 
-      - name: Verify single-admin security asset is globally loaded
+      - name: Verify single-admin security policy
         shell: bash
         run: |
           set -euo pipefail
