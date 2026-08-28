@@ -20,7 +20,7 @@ try{
   }
 }catch(e){console.error('Appearance v2.3.9 Neon init failed',e)}
 
-const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function validTheme(name){return THEMES[name]?name:'classic_forest'}
 function applyTheme(name){
   const key=validTheme(name);previewTheme=key;document.documentElement.dataset.nisTheme=key;
