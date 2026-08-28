@@ -36,7 +36,9 @@ jobs:
             assets/styles.v2.0.0.css
             assets/app.v2.3.0-neon-r2.js
             assets/single-admin-hardening.v2.3.4.js
-            assets/public-runtime.v2.3.8.js
+            assets/public-runtime.v2.3.9.js
+            assets/appearance.v2.3.9.js
+            assets/theme-pack.v2.3.9.css
             assets/donation-panel.v2.3.8.js
             assets/donation-panel.v2.3.5.css
             assets/contact-panel.v2.3.6.css
@@ -52,13 +54,14 @@ jobs:
         run: |
           set -euo pipefail
           node --check assets/runtime-config.js
-          node --check assets/public-runtime.v2.3.8.js
+          node --check assets/public-runtime.v2.3.9.js
           node --check assets/donation-panel.v2.3.8.js
           node --check assets/password-visibility.v2.3.2.js
           node --input-type=module --check < assets/app.v2.3.0-neon-r2.js
           node --input-type=module --check < assets/single-admin-hardening.v2.3.4.js
           node --input-type=module --check < assets/enhancements.v2.1.0.js
           node --input-type=module --check < assets/enhancements.v2.2.0.js
+          node --input-type=module --check < assets/appearance.v2.3.9.js
           node --input-type=module --check < assets/password-recovery.v2.3.1.js
 
       - name: Validate local asset references and production configuration
@@ -72,15 +75,21 @@ jobs:
           root = Path('.')
           index = Path('index.html').read_text(encoding='utf-8')
           runtime = Path('assets/runtime-config.js').read_text(encoding='utf-8')
+          public_runtime = Path('assets/public-runtime.v2.3.9.js').read_text(encoding='utf-8')
+          appearance = Path('assets/appearance.v2.3.9.js').read_text(encoding='utf-8')
+          theme_css = Path('assets/theme-pack.v2.3.9.css').read_text(encoding='utf-8')
 
           required_config = [
               'window.NIS_CONFIG',
+              '2.3.9-final-production-neon-r2-single-admin',
               'neonAuthUrl',
               'neonDataApiUrl',
               'canonicalUrl',
               'videoUploadWorkerUrl',
               'single-admin-hardening.v2.3.4.js',
-              'public-runtime.v2.3.8.js',
+              'public-runtime.v2.3.9.js',
+              'appearance.v2.3.9.js',
+              'theme-pack.v2.3.9.css',
               'production-performance.v2.3.8.css',
           ]
           for token in required_config:
@@ -97,11 +106,14 @@ jobs:
           admin_branch = runtime.find('if(isAdmin){')
           public_branch = runtime.find('}else{', admin_branch)
           hardening_pos = runtime.find('single-admin-hardening.v2.3.4.js')
-          public_runtime_pos = runtime.find('public-runtime.v2.3.8.js')
-          if min(admin_branch, public_branch, hardening_pos, public_runtime_pos) < 0:
+          appearance_pos = runtime.find('appearance.v2.3.9.js')
+          public_runtime_pos = runtime.find('public-runtime.v2.3.9.js')
+          if min(admin_branch, public_branch, hardening_pos, appearance_pos, public_runtime_pos) < 0:
               raise SystemExit('Public/admin runtime branching could not be validated')
           if not (admin_branch < hardening_pos < public_branch):
               raise SystemExit('Single-admin hardening must load only inside the admin route branch')
+          if not (admin_branch < appearance_pos < public_branch):
+              raise SystemExit('Appearance manager must load only inside the admin route branch')
           if public_runtime_pos < public_branch:
               raise SystemExit('Consolidated public runtime must load only inside the public route branch')
 
@@ -109,10 +121,24 @@ jobs:
               'public-enhancements.v2.2.3.js',
               'contact-panel.v2.3.6.js',
               'donation-panel.v2.3.5.js',
+              'public-runtime.v2.3.8.js',
           ]
           for token in obsolete_public_refs:
               if token in runtime:
                   raise SystemExit(f'Obsolete public runtime reference still active: {token}')
+
+          themes = [
+              'classic_forest','royal_blue','warm_gold','earth_hope',
+              'slate_teal','midnight_gold','heritage_burgundy','sage_cream','high_contrast'
+          ]
+          for theme in themes:
+              if theme not in public_runtime:
+                  raise SystemExit(f'Public runtime is missing theme: {theme}')
+              if theme not in appearance:
+                  raise SystemExit(f'Appearance manager is missing theme: {theme}')
+          for theme in ['slate_teal','midnight_gold','heritage_burgundy','sage_cream']:
+              if f'data-nis-theme="{theme}"' not in theme_css:
+                  raise SystemExit(f'Theme CSS is missing variables for: {theme}')
 
           asset_re = re.compile(r"assets/[A-Za-z0-9._/-]+\.(?:js|css|png|jpg|jpeg|webp|svg)")
           refs = set(asset_re.findall(index + '\n' + runtime))
@@ -120,7 +146,7 @@ jobs:
           if missing:
               raise SystemExit('Missing referenced local assets: ' + ', '.join(missing))
 
-          print(f'Validated {len(refs)} referenced local assets and route isolation.')
+          print(f'Validated {len(refs)} referenced local assets, route isolation and 9 controlled themes.')
           PY
 
       - name: Reject sensitive backend credentials in public source

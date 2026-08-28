@@ -1,0 +1,31 @@
+/* NIS Child Development Centre — professional theme pack v2.3.9 */
+
+html[data-nis-theme="slate_teal"]{--nis-theme-primary:#155e75;--nis-theme-primary-2:#0f4253;--nis-theme-accent:#e5b94f;--nis-theme-soft:#f4f8f9;--nis-theme-text:#17343c;--nis-theme-muted:#63777c}
+html[data-nis-theme="midnight_gold"]{--nis-theme-primary:#243447;--nis-theme-primary-2:#172330;--nis-theme-accent:#d6a84b;--nis-theme-soft:#f5f3ed;--nis-theme-text:#1d2a35;--nis-theme-muted:#66717a}
+html[data-nis-theme="heritage_burgundy"]{--nis-theme-primary:#6b2d3a;--nis-theme-primary-2:#4b1f29;--nis-theme-accent:#c8a45d;--nis-theme-soft:#faf6f3;--nis-theme-text:#3a252a;--nis-theme-muted:#77676b}
+html[data-nis-theme="sage_cream"]{--nis-theme-primary:#526b5b;--nis-theme-primary-2:#3b5043;--nis-theme-accent:#c4a76c;--nis-theme-soft:#f8f5ec;--nis-theme-text:#26372d;--nis-theme-muted:#6b756f}
+
+/* Compact theme selector used by the final Appearance module. */
+.nis-theme-grid.nis-theme-grid-compact{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important;margin:14px 0 16px!important}
+.nis-theme-card.nis-theme-card-compact{position:relative;min-height:132px;border:1px solid #d9e4df!important;border-radius:14px!important;background:#fff!important;padding:10px!important;cursor:pointer;text-align:left;transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease,background .16s ease;overflow:hidden}
+.nis-theme-card.nis-theme-card-compact:hover{transform:translateY(-1px);border-color:#a9bdb5!important;box-shadow:0 8px 22px rgba(16,42,34,.08)}
+.nis-theme-card.nis-theme-card-compact:focus-visible{outline:3px solid var(--nis-theme-accent,#f1b24a);outline-offset:2px}
+.nis-theme-card.nis-theme-card-compact.selected{border:2px solid var(--nis-theme-primary,#0f5c45)!important;background:linear-gradient(180deg,#fff 0%,rgba(243,248,245,.72) 100%)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--nis-theme-primary,#0f5c45) 14%,transparent)!important}
+.nis-theme-swatch.nis-theme-swatch-compact{height:40px!important;border-radius:9px!important;margin:0 0 9px!important;display:flex;overflow:hidden;border:1px solid rgba(14,44,35,.08)}
+.nis-theme-swatch.nis-theme-swatch-compact span{flex:1}
+.nis-theme-card-copy{display:grid;gap:3px;padding-right:26px}
+.nis-theme-card-copy strong{font-size:.93rem;line-height:1.2;color:#172a23}
+.nis-theme-card-copy p{margin:0!important;color:#65756f;font-size:.76rem;line-height:1.35}
+.nis-theme-selected-badge{position:absolute;right:8px;top:8px;width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:#eef4f1;color:#7b8a84;font-size:.76rem;font-weight:900;border:1px solid #d7e2dd;transition:.16s ease}
+.nis-theme-card.selected .nis-theme-selected-badge{background:var(--nis-theme-primary,#0f5c45);color:#fff;border-color:var(--nis-theme-primary,#0f5c45);box-shadow:0 3px 10px rgba(10,55,42,.2)}
+.nis-theme-card.selected .nis-theme-selected-badge::before{content:'✓'}
+.nis-theme-card:not(.selected) .nis-theme-selected-badge::before{content:''}
+.nis-appearance-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 12px;border:1px solid #dce6e1;border-radius:12px;background:#f8fbf9;margin-top:10px}
+.nis-appearance-summary strong{display:block;font-size:.9rem;color:#173128}
+.nis-appearance-summary span{font-size:.78rem;color:#65756f}
+.nis-appearance-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:4px}
+.nis-appearance-preview-chip{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border-radius:999px;background:#eef5f1;color:var(--nis-theme-primary,#0f5c45);font-size:.75rem;font-weight:800;border:1px solid #dbe7e1}
+.nis-appearance-preview-dot{width:9px;height:9px;border-radius:50%;background:var(--nis-theme-primary,#0f5c45);box-shadow:0 0 0 3px color-mix(in srgb,var(--nis-theme-primary,#0f5c45) 12%,transparent)}
+
+@media(max-width:1050px){.nis-theme-grid.nis-theme-grid-compact{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:680px){.nis-theme-grid.nis-theme-grid-compact{grid-template-columns:1fr!important}.nis-theme-card.nis-theme-card-compact{min-height:116px}.nis-appearance-summary{align-items:flex-start}}

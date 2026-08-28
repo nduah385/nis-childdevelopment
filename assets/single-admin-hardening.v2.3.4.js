@@ -37,7 +37,7 @@ function statusMessage(message) {
 
 function markBuild() {
   const marker = document.querySelector('#adminDashboard .mini-label');
-  if (marker) marker.textContent = 'Website build v2.3.4 • Neon + R2 • Single Admin';
+  if (marker) marker.textContent = 'Website build v2.3.9 • Neon + R2 • Single Admin • Final Production';
 }
 
 async function lockAdministration(message) {
@@ -96,8 +96,6 @@ async function verifyPrimaryAdministrator() {
   }
 }
 
-// Block dashboard interaction until the signed-in account has passed the
-// single-primary-administrator check. Database policies remain authoritative.
 document.addEventListener('click', (event) => {
   const dashboard = event.target?.closest?.('#adminDashboard');
   if (!dashboard || document.documentElement.dataset[STATE_ATTR] === VERIFIED) return;
