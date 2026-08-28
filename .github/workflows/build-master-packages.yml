@@ -1,0 +1,152 @@
+name: Build v2.3.9 Master Packages
+
+on:
+  push:
+    branches: [package-masters-v2.3.9]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build exact NIS stable baseline package
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE_SHA="51b2502dd55655bd7da1a2ef0edbb509fdc29317"
+          mkdir -p dist
+          git archive --format=zip \
+            --prefix="NIS-Child-Development-Centre-Website-Master-v2.3.9/" \
+            --output="dist/NIS-Child-Development-Centre-Website-Master-v2.3.9.zip" \
+            "$BASE_SHA"
+
+      - name: Build generic NGO Website Master
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE_SHA="51b2502dd55655bd7da1a2ef0edbb509fdc29317"
+          rm -rf generic-src
+          mkdir -p generic-src
+          git archive "$BASE_SHA" | tar -x -C generic-src
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          root = Path('generic-src')
+          text_suffixes = {'.html','.js','.css','.md','.txt','.xml','.yml','.yaml','.json'}
+
+          replacements = [
+              ('NIS Child Development Centre', 'Your NGO Name'),
+              ('Nipe International School', 'Your Educational Institution'),
+              ('https://nduah385.github.io/nis-childdevelopment/', 'https://example.org/'),
+              ('nduah385.github.io/nis-childdevelopment/', 'example.org/'),
+              ('https://www.nipeinternationalschool.org/', 'https://education.example.org/'),
+              ('www.nipeinternationalschool.org', 'education.example.org'),
+              ('info@nipeinternationalschool.org', 'info@example.org'),
+              ('P529+438, Santeo, Near Cedar Estate', 'Your NGO address'),
+              ('(+233) 24 347 5416', '+000 000 000 000'),
+              ('+233 24 347 5416', '+000 000 000 000'),
+              ('+233243475416', '000000000000'),
+              ('https://nis-cdc-media-upload.nduah385.workers.dev', 'https://your-worker.example.workers.dev'),
+              ('NIS → Education', 'NGO → Education'),
+              ('window.NIS_CONFIG', 'window.NGO_CONFIG'),
+              ('NIS_CONFIG', 'NGO_CONFIG'),
+              ('%3ENIS%3C', '%3ENGO%3C'),
+              ('>NIS<', '>NGO<'),
+              ('Website build v2.3.9 • Neon + R2 • Single Admin • Final Production', 'NGO Website Master v2.3.9 • Neon + R2 • Single Admin'),
+              ('2.3.9-final-production-neon-r2-single-admin', '2.3.9-generic-ngo-master-neon-r2-single-admin'),
+          ]
+
+          for path in root.rglob('*'):
+              if not path.is_file() or path.suffix.lower() not in text_suffixes:
+                  continue
+              try:
+                  text = path.read_text(encoding='utf-8')
+              except UnicodeDecodeError:
+                  continue
+              for old, new in replacements:
+                  text = text.replace(old, new)
+              path.write_text(text, encoding='utf-8')
+
+          # Configure generic runtime placeholders safely. Empty values prevent
+          # accidental calls to the original NIS backend until the installer fills them.
+          runtime = root / 'assets/runtime-config.js'
+          text = runtime.read_text(encoding='utf-8')
+          text = re.sub(r'neonAuthUrl:\s*"[^"]*"', 'neonAuthUrl: ""', text)
+          text = re.sub(r'neonDataApiUrl:\s*"[^"]*"', 'neonDataApiUrl: ""', text)
+          text = re.sub(r'videoUploadWorkerUrl:\s*"[^"]*"', 'videoUploadWorkerUrl: ""', text)
+          text = re.sub(r'bootstrapOrganisationLogo:\s*"[^"]*"', 'bootstrapOrganisationLogo: ""', text)
+          text = re.sub(r'bootstrapSchoolLogo:\s*"[^"]*"', 'bootstrapSchoolLogo: ""', text)
+          runtime.write_text(text, encoding='utf-8')
+
+          # Make the generic CSP backend-agnostic while retaining HTTPS-only restrictions.
+          index = root / 'index.html'
+          text = index.read_text(encoding='utf-8')
+          text = text.replace('https://ep-quiet-star-af3t7s87.neonauth.c-2.us-west-2.aws.neon.tech', 'https://*.neon.tech')
+          text = text.replace('https://ep-quiet-star-af3t7s87.apirest.c-2.us-west-2.aws.neon.tech', 'https://*.neon.tech')
+          text = text.replace('https://your-worker.example.workers.dev', 'https://*.workers.dev')
+          text = text.replace('assets/social-preview.png', 'assets/social-preview.svg')
+          index.write_text(text, encoding='utf-8')
+
+          # Generic social preview (text SVG avoids shipping NIS branding).
+          svg = '''<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+          <rect width="1200" height="630" fill="#0f5c45"/>
+          <rect x="70" y="70" width="1060" height="490" rx="36" fill="#f3f8f5"/>
+          <text x="120" y="265" font-family="Arial, sans-serif" font-size="72" font-weight="700" fill="#17312a">Your NGO Name</text>
+          <text x="120" y="350" font-family="Arial, sans-serif" font-size="34" fill="#60736d">Child Development • Community • Impact</text>
+          <rect x="120" y="405" width="300" height="12" rx="6" fill="#f1b24a"/>
+          </svg>'''
+          (root / 'assets/social-preview.svg').write_text(svg, encoding='utf-8')
+
+          # Generic setup guide.
+          guide = '''# NGO Website Master v2.3.9\n\nThis package is derived from the stable NIS Child Development Centre v2.3.9 production architecture. Visible NIS branding, production URLs, backend endpoints and contact details have been replaced with generic placeholders.\n\n## Architecture\n- Static HTML/CSS/JavaScript frontend\n- GitHub Pages compatible\n- Neon Auth + Neon Data API\n- Cloudflare R2 media worker\n- Single-administrator security model\n- Professional nine-theme Appearance system\n- Donation enquiry, Contact + Google Maps, WhatsApp, gallery, videos, programmes, projects, campaigns, news/events and school/education-institution sections\n\n## Before deployment\n1. Create a Neon project with the compatible database schema and Neon Auth/Data API.\n2. Configure a Cloudflare R2 upload/media Worker compatible with the frontend endpoints.\n3. Open `assets/runtime-config.js` and set:\n   - `neonAuthUrl`\n   - `neonDataApiUrl`\n   - `canonicalUrl`\n   - `videoUploadWorkerUrl`\n   - optional bootstrap organisation/school logo URLs\n4. Replace `https://example.org/` in `index.html`, `robots.txt`, `sitemap.xml`, and `.github/workflows/production-guard.yml` with the final production website URL.\n5. Replace visible placeholders such as `Your NGO Name`, `Your Educational Institution`, `Your NGO address`, `info@example.org`, and generic phone details. Much of the site content can then be managed through the Administration Dashboard once connected to Neon.\n6. Review Content-Security-Policy in `index.html`. It permits HTTPS Neon and Workers subdomains for portability; you may tighten it to your exact production hosts after setup.\n7. Create exactly one active `super_admin` record. The frontend hardening intentionally locks administration if more than one active administrator exists.\n8. Run the Production Guard before deployment.\n\n## Important\nThe internal CSS class prefix `nis-` is intentionally retained for v2.3.9 code compatibility. It is an implementation namespace only and does not create visible NIS branding. Renaming it is not required and is not recommended unless you are maintaining a fork with full regression testing.\n\n## Version\nNGO Website Master v2.3.9 — generic reusable baseline.\n'''
+          (root / 'GENERIC_NGO_SETUP_v2.3.9.md').write_text(guide, encoding='utf-8')
+
+          # Add a small configuration checklist beside the runtime config.
+          checklist = '''GENERIC NGO WEBSITE MASTER v2.3.9\n\nREQUIRED BEFORE GO-LIVE:\n[ ] NGO name and public content replaced\n[ ] Neon Auth URL configured\n[ ] Neon Data API URL configured\n[ ] Cloudflare R2 Worker URL configured\n[ ] Canonical URL updated in HTML/runtime/robots/sitemap/guard\n[ ] Organisation logo configured\n[ ] Single super_admin created\n[ ] Google Maps embed configured if required\n[ ] Donation/bank information reviewed\n[ ] Production Guard passes\n[ ] GitHub Pages/custom domain verified\n'''
+          (root / 'CONFIGURATION_CHECKLIST.txt').write_text(checklist, encoding='utf-8')
+          PY
+
+          # Remove the NIS-branded social preview binary from the generic master.
+          rm -f generic-src/assets/social-preview.png
+
+          # Package with a clean top-level directory.
+          mv generic-src NGO-Website-Master-v2.3.9
+          zip -qr "dist/NGO-Website-Master-v2.3.9.zip" NGO-Website-Master-v2.3.9
+
+      - name: Verify package contents
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s dist/NIS-Child-Development-Centre-Website-Master-v2.3.9.zip
+          test -s dist/NGO-Website-Master-v2.3.9.zip
+          unzip -tq dist/NIS-Child-Development-Centre-Website-Master-v2.3.9.zip
+          unzip -tq dist/NGO-Website-Master-v2.3.9.zip
+          echo "NIS package SHA256: $(sha256sum dist/NIS-Child-Development-Centre-Website-Master-v2.3.9.zip | awk '{print $1}')"
+          echo "Generic package SHA256: $(sha256sum dist/NGO-Website-Master-v2.3.9.zip | awk '{print $1}')"
+
+      - name: Upload NIS master package
+        uses: actions/upload-artifact@v4
+        with:
+          name: NIS-Child-Development-Centre-Website-Master-v2.3.9
+          path: dist/NIS-Child-Development-Centre-Website-Master-v2.3.9.zip
+          if-no-files-found: error
+          compression-level: 0
+
+      - name: Upload generic NGO master package
+        uses: actions/upload-artifact@v4
+        with:
+          name: NGO-Website-Master-v2.3.9
+          path: dist/NGO-Website-Master-v2.3.9.zip
+          if-no-files-found: error
+          compression-level: 0
